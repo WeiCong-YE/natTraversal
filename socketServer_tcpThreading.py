@@ -8,20 +8,25 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         while True:
             data = self.request.recv(1024)
             cur_thread = threading.current_thread()
-            response = "{}: {}".format(cur_thread.name, data).encode('utf8')
-            self.request.sendall(response)
+            response = "{}: {}".format(cur_thread.name, data)
             if data.decode('utf8').upper() == 'HOME':
                 self.dic['home']=self.client_address
+                response += '\n' + repr(self.dic['home'])
                 print(self.dic['home'])
             if data.decode('utf8').upper() == 'GETHOME':
+                print('收到得到homeip的请求')
                 if 'home' in self.dic:
-                    self.request.sendall(self.dic['home'].encode('utf8'))
+                    print("i have a home")
+                    response += '\n' + repr(self.dic['home'])
+                    print(repr(self.dic['home']))
                 else :
-                    self.request.sendall('没有收到home地址'.encode('utf8'))
+                    print("找不到home的ip啊")
+                    response += '没有收到home的连接'
+            self.request.sendall(response.encode('utf8')) 
             if data.decode('utf8').upper() == 'QUIT' or data.decode('utf8').upper() == 'EXIT' :
                 print("退出")
                 break
-        self.sock.close()
+        self.request.close()
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):#继承ThreadingMixIn表示使用多线程处理request，注意这两个类的继承顺序不能变
     pass
