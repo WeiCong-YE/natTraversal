@@ -13,8 +13,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             self.dic['home']=self.client_address
             print(self.dic['home'])
         if data.decode('utf8').upper() == 'GETHOME':
-            if dic.has_key('home'):
-                self.request.sendall(dic['home'].encode('utf8'))
+            if 'home' in self.dic:
+                self.request.sendall(self.dic['home'].encode('utf8'))
             else :
                 self.request.sendall('没有收到home地址'.encode('utf8'))
 
