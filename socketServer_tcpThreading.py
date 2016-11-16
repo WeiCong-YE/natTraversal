@@ -5,18 +5,23 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     dic = {}
     def handle(self):
-        data = self.request.recv(1024)
-        cur_thread = threading.current_thread()
-        response = "{}: {}".format(cur_thread.name, data).encode('utf8')
-        self.request.sendall(response)
-        if data.decode('utf8').upper() == 'HOME':
-            self.dic['home']=self.client_address
-            print(self.dic['home'])
-        if data.decode('utf8').upper() == 'GETHOME':
-            if 'home' in self.dic:
-                self.request.sendall(self.dic['home'].encode('utf8'))
-            else :
-                self.request.sendall('没有收到home地址'.encode('utf8'))
+        while True:
+            data = self.request.recv(1024)
+            cur_thread = threading.current_thread()
+            response = "{}: {}".format(cur_thread.name, data).encode('utf8')
+            self.request.sendall(response)
+            if data.decode('utf8').upper() == 'HOME':
+                self.dic['home']=self.client_address
+                print(self.dic['home'])
+            if data.decode('utf8').upper() == 'GETHOME':
+                if 'home' in self.dic:
+                    self.request.sendall(self.dic['home'].encode('utf8'))
+                else :
+                    self.request.sendall('没有收到home地址'.encode('utf8'))
+            if data.decode('utf8').upper() == 'QUIT' or data.decode('utf8').upper() == 'EXIT' :
+                print("退出")
+                break
+        self.sock.close()
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):#继承ThreadingMixIn表示使用多线程处理request，注意这两个类的继承顺序不能变
     pass
