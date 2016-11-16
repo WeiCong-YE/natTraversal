@@ -12,6 +12,11 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         if data.decode('utf8').upper() == 'HOME':
             self.dic['home']=self.client_address
             print(self.dic['home'])
+        if data.decode('utf8').upper() == 'GETHOME':
+            if dic.has_key('home'):
+                self.request.sendall(dic['home'].encode('utf8'))
+            else :
+                self.request.sendall('没有收到home地址'.encode('utf8'))
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):#继承ThreadingMixIn表示使用多线程处理request，注意这两个类的继承顺序不能变
     pass
