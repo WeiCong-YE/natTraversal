@@ -23,19 +23,28 @@ class TcpClient:
             if not data:
                 self.client.close()
                 break
+
             print(data.decode('utf8'))'''
         pass
 
-    def client(self,message):
+    def client(self):
         sock = socket(AF_INET, SOCK_STREAM)
         sock.connect((self.HOST, self.PORT))
-        try:
-            sock.sendall(message.encode('utf8'))
-            response = sock.recv(1024)
-            print("Received: {}".format(response).encode('utf8')) 
-        finally:
-            sock.close()
+        while True:
+            try:
+                message = input("来吧，输入\n")
+                
+                sock.sendall(message.encode('utf8'))
+                response = sock.recv(1024)
+                print(response.decode('utf8'))
+                if message.upper() == "QUIT":
+                    break
+            except Exception as e:
+                print(e)
+                break;
+        sock.close()
             
 if __name__ == '__main__':
     client=TcpClient()
-    client.client("home")
+    client.client()
+    
