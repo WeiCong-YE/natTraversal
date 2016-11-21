@@ -4,6 +4,7 @@ from socket import *
 
 class TcpClient:
     HOST='54.169.85.240'
+    local = '127.0.0.1'
     PORT=22345
     BUFSIZ=1024
     ADDR=(HOST, PORT)
@@ -23,7 +24,6 @@ class TcpClient:
             if not data:
                 self.client.close()
                 break
-
             print(data.decode('utf8'))'''
         pass
 
